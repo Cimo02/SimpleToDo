@@ -20,7 +20,7 @@ const TodoSchema = new mongoose.Schema({
 
   desc: {
     type: String,
-    required: false,
+    required: true,
     trim: true,
     set: setDesc,
   },
@@ -28,12 +28,10 @@ const TodoSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    default: "Note",
   },
 
   date: {
-    type: Date,
-    required: false,
+    type: String,
   },
 
   owner: {
@@ -45,7 +43,7 @@ const TodoSchema = new mongoose.Schema({
   createdData: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 
 TodoSchema.statics.toAPI = (doc) => ({
@@ -53,7 +51,7 @@ TodoSchema.statics.toAPI = (doc) => ({
   desc: doc.desc,
   type: doc.type,
   date: doc.date,
-  createdData: doc.createdData,
+  createdData: doc.createdData
 });
 
 TodoSchema.statics.findByOwner = (ownerId, callback) => {
@@ -61,7 +59,7 @@ TodoSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return TodoModel.find(search).select('title').exec(callback);
+  return TodoModel.find(search).select('title desc type date').exec(callback);
 };
 
 TodoModel = mongoose.model('Todo', TodoSchema);

@@ -1,9 +1,33 @@
+/* Color Theme Swatches in Hex 
+1 - { color: #322140; }
+2 - { color: #3D305E; }
+3 - { color: #4F4F8C; }
+4 - { color: #6883CC; }
+5 - { color: #82C5FF; }
+*/
+
 html, body {
+    font-family: mr-eaves-xl-modern, sans-serif;
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+}
+
+#appTitle {
+    font-weight: 700;
+    padding-left: 20px;
+    float:left;
+    color: white;
+}
+
+#mainTitle {
+    font-weight: 700;
+    font-size: 2em;
+    margin-bottom: 50px;
+    text-align: center;
+    color: #3D305E;
 }
 
 #logo {
@@ -16,21 +40,21 @@ html, body {
 
 nav {
     width: 100%;
-    height: 50px;
-    background-color: #55acee;
+    height: 65px;
+    background-color: #3D305E;
 }
 
 nav:nth-child(1) {
-    padding-left: 25px;
+    padding-right: 25px;
 }
 
 .navlink {
     padding: 5px;
-    padding-top: 12px;
-    padding-left: 20px;
+    padding-top: 20px;
+    padding-right: 20px;
     color: white;
     font-size: 1.3em;
-    float: left;
+    float: right;
 }
 
 .navlink a, .navlink a:link, .navlink a:visited, .navlink a:hover, .navlink a:active {
@@ -38,22 +62,22 @@ nav:nth-child(1) {
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: #3D305E;
     transition: background-color 0.4s ease;
 }
 
 .navlink a:hover {
     transition: background-color 0.8s ease;
-    background-color: #66bdff;
+    background-color: #4F4F8C;
 }
 
 .todoForm {
-    border: 2px solid #338acc;
+    border: 2px solid #322140;
     height: 35px;
-    width: 700px;
+    width: 1200px;
     margin-top:0px;
     padding-top:10px;
-    background-color: #55acee;
+    background-color: #3D305E;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -75,8 +99,8 @@ nav:nth-child(1) {
     transition: background-color 0.4s ease;
     display: inline;
     width: 90px;
-    background-color: #55acee;
-    border-radius: 2px;
+    background-color: #3D305E;
+    border-style: none;
     color: white;
     text-decoration: none;
 }
@@ -87,14 +111,14 @@ nav:nth-child(1) {
 
 .makeTodoSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: #322140;
 }
 
 .mainForm {
     height: 300px;
     width: 350px;
     margin: 0 auto;
-    padding-top: 350px;
+    padding-top: 200px;
     font-size: 1.2em;
 }
 
@@ -118,9 +142,9 @@ nav:nth-child(1) {
     margin-top: 14px;
     font-size: 1.2em;
     width: 100px;
-    background-color: #55acee;
+    background-color: #3D305E;
     border-radius: 2px;
-    border-color: #66acee;
+    border-color: #4F4F8C;
     padding: 3px 0px;
     color: white;
     text-decoration: none;
@@ -132,7 +156,7 @@ nav:nth-child(1) {
 
 .formSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: #322140;
 }
 
 #user, #pass, #pass2 {
@@ -144,7 +168,7 @@ nav:nth-child(1) {
 
 #user:focus, #pass:focus, #pass2:focus {
     outline: none;
-    box-shadow: 0px 0px 1px 1px #55acee;
+    box-shadow: 0px 0px 1px 1px #3D305E;
 }
 
 #domoMessage {
@@ -183,7 +207,7 @@ nav:nth-child(1) {
     margin-top: -20px;
     margin-left: 135px;
     height: 450px;
-    width: 300px;
+    width: 400px;
     -ms-transform: rotate(330deg);
     -webkit-transform: rotate(330deg); 
     transform: rotate(330deg);
@@ -192,7 +216,7 @@ nav:nth-child(1) {
 #todos {
     width: 40%;
     min-width: 400px;
-    border: 2px solid #55acee;
+    border: 2px solid #3D305E;
     border-radius: 4px;
     margin: 0 auto;
     margin-top: 100px;
@@ -203,28 +227,29 @@ nav:nth-child(1) {
     margin: 0 auto;
     margin-top: 2px;
     margin-bottom: 2px;
-    border: 2px solid #55acee;
+    border: 2px solid #3D305E;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: #3D305E;
     padding: 10px;
     min-height:60px;
     overflow: hidden;
+    color: white;
 }
 
 .todo:hover {
     transition: border-color 0.2s ease-out;
     border-color: rgba(255,255,255, 0.8);
     transition: background-color 2.6s ease-out;
-    background-color: #66bfff;
+    background-color: #4F4F8C;
 }
 
 img.domoFace {
-    margin-left: 25px;
-    margin-right: 10px;
+    margin-left: 20px;
+    margin-right: 30px;
     height: 50px;
     width: 50px;
     border-radius: 4px;
-    margin-top:10px;
+    margin-top:5px;
     float:left;
 }
 
@@ -237,19 +262,8 @@ h3.emptyTodo {
 }
 
 h3.todoTitle {
-    float:left;
-    width: 200px;
     font-weight: bold;
     padding-left: 65px;
-    font-size: 1.5em;
-}
-
-h3.todoDesc {
-    float:right;
-    text-align: left;
-    width: 100px;
-    font-weight: bold;
-    padding-right: 40px;
     font-size: 1.5em;
 }
 

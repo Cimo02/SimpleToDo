@@ -11,7 +11,7 @@ var handleTodo = function handleTodo(e) {
     }
 
     sendAjax('POST', $("#todoForm").attr("action"), $("#todoForm").serialize(), function () {
-        loadDomosFromServer();
+        loadTodosFromServer();
     });
 
     return false;
@@ -41,12 +41,23 @@ var TodoForm = function TodoForm(props) {
         React.createElement("input", { id: "todoDesc", type: "text", name: "desc", placeholder: "Item Description" }),
         React.createElement(
             "label",
+            { htmlFor: "date" },
+            "Date: "
+        ),
+        React.createElement("input", { id: "todoDate", type: "date", name: "date" }),
+        React.createElement(
+            "label",
             { htmlFor: "type" },
             "Type: "
         ),
         React.createElement(
             "select",
             { id: "todoType", name: "type", form: "todoForm" },
+            React.createElement(
+                "option",
+                { value: "note" },
+                "Note"
+            ),
             React.createElement(
                 "option",
                 { value: "travel" },
@@ -56,11 +67,6 @@ var TodoForm = function TodoForm(props) {
                 "option",
                 { value: "school" },
                 "School"
-            ),
-            React.createElement(
-                "option",
-                { value: "note" },
-                "Note"
             ),
             React.createElement(
                 "option",
@@ -78,14 +84,8 @@ var TodoForm = function TodoForm(props) {
                 "Shopping"
             )
         ),
-        React.createElement(
-            "label",
-            { htmlFor: "date" },
-            "Date: "
-        ),
-        React.createElement("input", { id: "todoDate", type: "date", name: "date", value: "2019-01-01" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "makeTodoSubmit", type: "submit", value: "Make ToDo" })
+        React.createElement("input", { className: "makeTodoSubmit", type: "submit", value: "Add ToDo" })
     );
 };
 
@@ -106,20 +106,42 @@ var TodoList = function TodoList(props) {
         return React.createElement(
             "div",
             { key: todo._id, className: "todo" },
-            React.createElement("img", { src: "/assets/img/domoface.jpeg", alt: "domo face", className: "domoFace" }),
             React.createElement(
-                "h3",
-                { className: "todoTitle" },
-                "Title: ",
-                todo.title,
-                " "
+                "div",
+                null,
+                React.createElement("img", { src: "/assets/img/domoface.jpeg", alt: "domo face", className: "domoFace" }),
+                React.createElement(
+                    "h3",
+                    { className: "todoTitle" },
+                    "Title: ",
+                    todo.title,
+                    " "
+                )
             ),
             React.createElement(
-                "h3",
-                { className: "todoDesc" },
-                "Description: ",
-                todo.desc,
-                " "
+                "div",
+                null,
+                React.createElement(
+                    "h3",
+                    { className: "todoDesc" },
+                    "Description: ",
+                    todo.desc,
+                    " "
+                ),
+                React.createElement(
+                    "h3",
+                    { className: "todoType" },
+                    "Type: ",
+                    todo.type,
+                    " "
+                ),
+                React.createElement(
+                    "h3",
+                    { className: "todoDate" },
+                    "Date: ",
+                    todo.date,
+                    " "
+                )
             )
         );
     });

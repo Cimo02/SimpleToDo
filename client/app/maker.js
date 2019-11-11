@@ -9,7 +9,7 @@ const handleTodo = (e) => {
     }
 
     sendAjax('POST', $("#todoForm").attr("action"), $("#todoForm").serialize(), function() {
-        loadDomosFromServer();
+        loadTodosFromServer();
     });
 
     return false;
@@ -30,21 +30,21 @@ const TodoForm = (props) => {
             <label htmlFor="desc">Description: </label>
             <input id="todoDesc" type="text" name="desc" placeholder="Item Description"/>
 
+            <label htmlFor="date">Date: </label>
+            <input id="todoDate" type="date" name="date"/>
+
             <label htmlFor="type">Type: </label>
             <select id="todoType" name="type" form="todoForm">
+              <option value="note">Note</option>
               <option value="travel">Travel</option>
               <option value="school">School</option>
-              <option value="note">Note</option>
               <option value="medical">Medical</option>
               <option value="event">Event</option>
               <option value="shopping">Shopping</option>
             </select>
 
-            <label htmlFor="date">Date: </label>
-            <input id="todoDate" type="date" name="date" value="2019-01-01"/>
-
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeTodoSubmit" type="submit" value="Make ToDo" />
+            <input className="makeTodoSubmit" type="submit" value="Add ToDo" />
         </form>
     );
 };
@@ -61,9 +61,15 @@ const TodoList = function(props) {
     const todoNodes = props.todos.map(function(todo) {
         return (
             <div key={todo._id} className="todo">
-                <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" /> 
-                <h3 className="todoTitle">Title: {todo.title} </h3>
-                <h3 className="todoDesc">Description: {todo.desc} </h3>
+                <div>
+                    <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" /> 
+                    <h3 className="todoTitle">Title: {todo.title} </h3>
+                </div>
+                <div>
+                    <h3 className="todoDesc">Description: {todo.desc} </h3>
+                    <h3 className="todoType">Type: {todo.type} </h3>
+                    <h3 className="todoDate">Date: {todo.date} </h3>
+                </div>
             </div>
         );
     });

@@ -44,6 +44,7 @@ const LoginWindow = (props) => {
             method="POST"
             className="mainform"
         >
+            <h1 id="mainTitle">The Simple To-Do List</h1> 
             <label htmlFor="username">Username: </label>
             <input id="user" type="text" name="username" placeholder="username"/>
             <label htmlFor="pass">Password: </label>

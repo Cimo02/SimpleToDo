@@ -48,6 +48,11 @@ var LoginWindow = function LoginWindow(props) {
             className: "mainform"
         },
         React.createElement(
+            "h1",
+            { id: "mainTitle" },
+            "The Simple To-Do List"
+        ),
+        React.createElement(
             "label",
             { htmlFor: "username" },
             "Username: "

@@ -20,8 +20,8 @@ const makeTodo = (req, res) => {
   const todoData = {
     title: req.body.title,
     desc: req.body.desc,
-    type: req.body.type,
     date: req.body.date,
+    type: req.body.type,
     owner: req.session.account._id,
   };
 
