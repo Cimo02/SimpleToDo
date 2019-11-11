@@ -1,79 +1,124 @@
 "use strict";
 
-var handleDomo = function handleDomo(e) {
+var handleTodo = function handleTodo(e) {
     e.preventDefault();
 
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
-    if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
-        handleError("RAWR! All fields are required!");
+    if ($("#todoTitle").val() == '') {
+        handleError("A ToDo item title is required.");
         return false;
     }
 
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
+    sendAjax('POST', $("#todoForm").attr("action"), $("#todoForm").serialize(), function () {
         loadDomosFromServer();
     });
 
     return false;
 };
 
-var DomoForm = function DomoForm(props) {
+var TodoForm = function TodoForm(props) {
     return React.createElement(
         "form",
-        { id: "domoForm",
-            name: "domoForm",
-            onSubmit: handleDomo,
+        { id: "todoForm",
+            name: "todoForm",
+            onSubmit: handleTodo,
             action: "/maker",
             method: "POST",
-            className: "domoForm"
+            className: "todoForm"
         },
         React.createElement(
             "label",
-            { htmlFor: "name" },
-            "Name: "
+            { htmlFor: "title" },
+            "Title: "
         ),
-        React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
+        React.createElement("input", { id: "todoTitle", type: "text", name: "title", placeholder: "Item Title" }),
         React.createElement(
             "label",
-            { htmlFor: "age" },
-            "Age: "
+            { htmlFor: "desc" },
+            "Description: "
         ),
-        React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
+        React.createElement("input", { id: "todoDesc", type: "text", name: "desc", placeholder: "Item Description" }),
+        React.createElement(
+            "label",
+            { htmlFor: "type" },
+            "Type: "
+        ),
+        React.createElement(
+            "select",
+            { id: "todoType", name: "type", form: "todoForm" },
+            React.createElement(
+                "option",
+                { value: "travel" },
+                "Travel"
+            ),
+            React.createElement(
+                "option",
+                { value: "school" },
+                "School"
+            ),
+            React.createElement(
+                "option",
+                { value: "note" },
+                "Note"
+            ),
+            React.createElement(
+                "option",
+                { value: "medical" },
+                "Medical"
+            ),
+            React.createElement(
+                "option",
+                { value: "event" },
+                "Event"
+            ),
+            React.createElement(
+                "option",
+                { value: "shopping" },
+                "Shopping"
+            )
+        ),
+        React.createElement(
+            "label",
+            { htmlFor: "date" },
+            "Date: "
+        ),
+        React.createElement("input", { id: "todoDate", type: "date", name: "date", value: "2019-01-01" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
+        React.createElement("input", { className: "makeTodoSubmit", type: "submit", value: "Make ToDo" })
     );
 };
 
-var DomoList = function DomoList(props) {
-    if (props.domos.length === 0) {
+var TodoList = function TodoList(props) {
+    if (props.todos.length === 0) {
         return React.createElement(
             "div",
-            { className: "domoList" },
+            { className: "todoList" },
             React.createElement(
                 "h3",
-                { className: "emptyDomo" },
-                "No Domos yet"
+                { className: "emptyTodo" },
+                "No ToDos yet, add one!"
             )
         );
     }
 
-    var domoNodes = props.domos.map(function (domo) {
+    var todoNodes = props.todos.map(function (todo) {
         return React.createElement(
             "div",
-            { key: domo._id, className: "domo" },
+            { key: todo._id, className: "todo" },
             React.createElement("img", { src: "/assets/img/domoface.jpeg", alt: "domo face", className: "domoFace" }),
             React.createElement(
                 "h3",
-                { className: "domoName" },
-                "Name: ",
-                domo.name,
+                { className: "todoTitle" },
+                "Title: ",
+                todo.title,
                 " "
             ),
             React.createElement(
                 "h3",
-                { className: "domoAge" },
-                "Age: ",
-                domo.age,
+                { className: "todoDesc" },
+                "Description: ",
+                todo.desc,
                 " "
             )
         );
@@ -81,23 +126,23 @@ var DomoList = function DomoList(props) {
 
     return React.createElement(
         "div",
-        { className: "domoList" },
-        domoNodes
+        { className: "todoList" },
+        todoNodes
     );
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
-    sendAjax('GET', '/getDomos', null, function (data) {
-        ReactDOM.render(React.createElement(DomoList, { domos: data.domos }), document.querySelector("#domos"));
+var loadTodosFromServer = function loadTodosFromServer() {
+    sendAjax('GET', '/getTodos', null, function (data) {
+        ReactDOM.render(React.createElement(TodoList, { todos: data.todos }), document.querySelector("#todos"));
     });
 };
 
 var setup = function setup(csrf) {
-    ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+    ReactDOM.render(React.createElement(TodoForm, { csrf: csrf }), document.querySelector("#makeTodo"));
 
-    ReactDOM.render(React.createElement(DomoList, { domos: [] }), document.querySelector("#domos"));
+    ReactDOM.render(React.createElement(TodoList, { todos: [] }), document.querySelector("#todos"));
 
-    loadDomosFromServer();
+    loadTodosFromServer();
 };
 
 var getToken = function getToken() {

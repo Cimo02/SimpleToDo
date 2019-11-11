@@ -1,83 +1,98 @@
-const handleDomo = (e) => {
+const handleTodo = (e) => {
     e.preventDefault();
 
     $("#domoMessage").animate({width:'hide'},350);
 
-    if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
-        handleError("RAWR! All fields are required!");
+    if ($("#todoTitle").val() == '') {
+        handleError("A ToDo item title is required.");
         return false;
     }
 
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function() {
+    sendAjax('POST', $("#todoForm").attr("action"), $("#todoForm").serialize(), function() {
         loadDomosFromServer();
     });
 
     return false;
 };
 
-const DomoForm = (props) => {
+const TodoForm = (props) => {
     return (
-        <form id="domoForm" 
-            name="domoForm"
-            onSubmit={handleDomo}
+        <form id="todoForm" 
+            name="todoForm"
+            onSubmit={handleTodo}
             action="/maker"
             method="POST"
-            className="domoForm"
+            className="todoForm"
         >
-            <label htmlFor="name">Name: </label>
-            <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
-            <label htmlFor="age">Age: </label>
-            <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
+            <label htmlFor="title">Title: </label>
+            <input id="todoTitle" type="text" name="title" placeholder="Item Title"/>
+
+            <label htmlFor="desc">Description: </label>
+            <input id="todoDesc" type="text" name="desc" placeholder="Item Description"/>
+
+            <label htmlFor="type">Type: </label>
+            <select id="todoType" name="type" form="todoForm">
+              <option value="travel">Travel</option>
+              <option value="school">School</option>
+              <option value="note">Note</option>
+              <option value="medical">Medical</option>
+              <option value="event">Event</option>
+              <option value="shopping">Shopping</option>
+            </select>
+
+            <label htmlFor="date">Date: </label>
+            <input id="todoDate" type="date" name="date" value="2019-01-01"/>
+
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+            <input className="makeTodoSubmit" type="submit" value="Make ToDo" />
         </form>
     );
 };
 
-const DomoList = function(props) {
-    if (props.domos.length === 0){
+const TodoList = function(props) {
+    if (props.todos.length === 0){
         return (
-            <div className="domoList">
-                <h3 className="emptyDomo">No Domos yet</h3>
+            <div className="todoList">
+                <h3 className="emptyTodo">No ToDos yet, add one!</h3>
             </div>
         );
     }
 
-    const domoNodes = props.domos.map(function(domo) {
+    const todoNodes = props.todos.map(function(todo) {
         return (
-            <div key={domo._id} className="domo">
-                <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                <h3 className="domoName">Name: {domo.name} </h3>
-                <h3 className="domoAge">Age: {domo.age} </h3>
+            <div key={todo._id} className="todo">
+                <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" /> 
+                <h3 className="todoTitle">Title: {todo.title} </h3>
+                <h3 className="todoDesc">Description: {todo.desc} </h3>
             </div>
         );
     });
 
     return (
-        <div className="domoList">
-            {domoNodes}
+        <div className="todoList">
+            {todoNodes}
         </div>
     );
 };
 
-const loadDomosFromServer = () => {
-    sendAjax('GET', '/getDomos', null, (data) => {
+const loadTodosFromServer = () => {
+    sendAjax('GET', '/getTodos', null, (data) => {
         ReactDOM.render(
-            <DomoList domos={data.domos} />, document.querySelector("#domos")
+            <TodoList todos={data.todos} />, document.querySelector("#todos")
         );
     });
 };
 
 const setup = function(csrf) {
     ReactDOM.render(
-        <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+        <TodoForm csrf={csrf} />, document.querySelector("#makeTodo")
     );
 
     ReactDOM.render(
-        <DomoList domos={[]} />, document.querySelector("#domos")
+        <TodoList todos={[]} />, document.querySelector("#todos")
     );
 
-    loadDomosFromServer();
+    loadTodosFromServer();
 };
 
 const getToken = () => {

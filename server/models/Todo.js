@@ -48,7 +48,7 @@ const TodoSchema = new mongoose.Schema({
   },
 });
 
-DomoSchema.statics.toAPI = (doc) => ({
+TodoSchema.statics.toAPI = (doc) => ({
   title: doc.title,
   desc: doc.desc,
   type: doc.type,

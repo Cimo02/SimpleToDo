@@ -47,7 +47,7 @@ nav:nth-child(1) {
     background-color: #66bdff;
 }
 
-.domoForm {
+.todoForm {
     border: 2px solid #338acc;
     height: 35px;
     width: 700px;
@@ -58,7 +58,7 @@ nav:nth-child(1) {
     border-top-right-radius: 4px;
 }
 
-.domoForm label {
+.todoForm label {
     display: inline-block;
     width: 75px;
     margin-left: 10px;
@@ -67,11 +67,11 @@ nav:nth-child(1) {
     color: white;
 }
 
-.domoForm input[type=text] {
+.todoForm input[type=text] {
     float:left;
 }
 
-.makeDomoSubmit {
+.makeTodoSubmit {
     transition: background-color 0.4s ease;
     display: inline;
     width: 90px;
@@ -81,11 +81,11 @@ nav:nth-child(1) {
     text-decoration: none;
 }
 
-.makeDomoSubmit:link, .makeDomoSubmit:visited, .makeDomoSubmit:hover, .makeDomoSubmit:active {
+.makeTodoSubmit:link, .makeTodoSubmit:visited, .makeTodoSubmit:hover, .makeTodoSubmit:active {
     color: white;
 }
 
-.makeDomoSubmit:hover {
+.makeTodoSubmit:hover {
     transition: background-color 0.4s ease;
     background-color: #338acc;
 }
@@ -178,7 +178,7 @@ nav:nth-child(1) {
     font-style: italic;
 }
 
-#domo {
+#todo {
     z-index: 225;
     margin-top: -20px;
     margin-left: 135px;
@@ -189,7 +189,7 @@ nav:nth-child(1) {
     transform: rotate(330deg);
 }
 
-#domos {
+#todos {
     width: 40%;
     min-width: 400px;
     border: 2px solid #55acee;
@@ -198,7 +198,7 @@ nav:nth-child(1) {
     margin-top: 100px;
 }
 
-.domo {
+.todo {
     width: 95%;
     margin: 0 auto;
     margin-top: 2px;
@@ -211,7 +211,7 @@ nav:nth-child(1) {
     overflow: hidden;
 }
 
-.domo:hover {
+.todo:hover {
     transition: border-color 0.2s ease-out;
     border-color: rgba(255,255,255, 0.8);
     transition: background-color 2.6s ease-out;
@@ -228,7 +228,7 @@ img.domoFace {
     float:left;
 }
 
-h3.emptyDomo {
+h3.emptyTodo {
     width: 400px;
     font-size: 1.5em;
     margin: 0 auto;
@@ -236,7 +236,7 @@ h3.emptyDomo {
     margin-top: 18px;
 }
 
-h3.domoName {
+h3.todoTitle {
     float:left;
     width: 200px;
     font-weight: bold;
@@ -244,7 +244,7 @@ h3.domoName {
     font-size: 1.5em;
 }
 
-h3.domoAge {
+h3.todoDesc {
     float:right;
     text-align: left;
     width: 100px;
@@ -253,10 +253,10 @@ h3.domoAge {
     font-size: 1.5em;
 }
 
-.domo:first-child {
+.todo:first-child {
     margin-top: 10px;
 }
 
-.domo:last-child {
+.todo:last-child {
     margin-bottom:10px;
 }
