@@ -49,7 +49,7 @@ const signup = (request, response) => {
   const req = request;
   const res = response;
 
-   // cast to strings to cover up some security flaws
+  // cast to strings to cover up some security flaws
   req.body.username = `${req.body.username}`;
   req.body.pass = `${req.body.pass}`;
   req.body.pass2 = `${req.body.pass2}`;

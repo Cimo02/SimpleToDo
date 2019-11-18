@@ -3,15 +3,31 @@
 var handleTodo = function handleTodo(e) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#todoMessage").animate({ width: 'hide' }, 350);
 
     if ($("#todoTitle").val() == '') {
         handleError("A ToDo item title is required.");
         return false;
     }
+    var csrf = $("input[name=_csrf]").val();
 
     sendAjax('POST', $("#todoForm").attr("action"), $("#todoForm").serialize(), function () {
-        loadTodosFromServer();
+        loadTodosFromServer(csrf);
+    });
+
+    return false;
+};
+
+var handleDeleteTodo = function handleDeleteTodo(e) {
+    e.preventDefault();
+
+    $("#todoMessage").animate({ width: 'hide' }, 350);
+
+    var csrf = $("input[name=_csrf]").val();
+    var url = "_id=" + e.target.value + "&_csrf=" + csrf;
+
+    sendAjax('DELETE', "/deleteTodo", url, function (data) {
+        loadTodosFromServer(csrf);
     });
 
     return false;
@@ -28,60 +44,89 @@ var TodoForm = function TodoForm(props) {
             className: "todoForm"
         },
         React.createElement(
-            "label",
-            { htmlFor: "title" },
-            "Title: "
-        ),
-        React.createElement("input", { id: "todoTitle", type: "text", name: "title", placeholder: "Item Title" }),
-        React.createElement(
-            "label",
-            { htmlFor: "desc" },
-            "Description: "
-        ),
-        React.createElement("input", { id: "todoDesc", type: "text", name: "desc", placeholder: "Item Description" }),
-        React.createElement(
-            "label",
-            { htmlFor: "date" },
-            "Date: "
-        ),
-        React.createElement("input", { id: "todoDate", type: "date", name: "date" }),
-        React.createElement(
-            "label",
-            { htmlFor: "type" },
-            "Type: "
+            "h2",
+            { id: "addtodoTitle" },
+            "Add New To-Do"
         ),
         React.createElement(
-            "select",
-            { id: "todoType", name: "type", form: "todoForm" },
+            "ul",
+            null,
             React.createElement(
-                "option",
-                { value: "note" },
-                "Note"
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "title" },
+                    "Title: "
+                ),
+                React.createElement("input", { id: "todoTitle", type: "text", name: "title", placeholder: "Item Title" })
             ),
             React.createElement(
-                "option",
-                { value: "travel" },
-                "Travel"
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "desc" },
+                    "Description: "
+                )
             ),
             React.createElement(
-                "option",
-                { value: "school" },
-                "School"
+                "li",
+                null,
+                React.createElement("textarea", { id: "todoDesc", name: "desc" })
             ),
             React.createElement(
-                "option",
-                { value: "medical" },
-                "Medical"
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "type" },
+                    "Type: "
+                ),
+                React.createElement(
+                    "select",
+                    { id: "todoType", name: "type", form: "todoForm" },
+                    React.createElement(
+                        "option",
+                        { value: "Note" },
+                        "Note"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Travel" },
+                        "Travel"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "School" },
+                        "School"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Medical" },
+                        "Medical"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Event" },
+                        "Event"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Shopping" },
+                        "Shopping"
+                    )
+                )
             ),
             React.createElement(
-                "option",
-                { value: "event" },
-                "Event"
-            ),
-            React.createElement(
-                "option",
-                { value: "shopping" },
-                "Shopping"
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "date" },
+                    "Date: "
+                ),
+                React.createElement("input", { id: "todoDate", type: "date", name: "date" })
             )
         ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
@@ -109,18 +154,13 @@ var TodoList = function TodoList(props) {
             React.createElement(
                 "div",
                 null,
-                React.createElement("img", { src: "/assets/img/domoface.jpeg", alt: "domo face", className: "domoFace" }),
                 React.createElement(
                     "h3",
                     { className: "todoTitle" },
                     "Title: ",
                     todo.title,
                     " "
-                )
-            ),
-            React.createElement(
-                "div",
-                null,
+                ),
                 React.createElement(
                     "h3",
                     { className: "todoDesc" },
@@ -142,6 +182,20 @@ var TodoList = function TodoList(props) {
                     todo.date,
                     " "
                 )
+            ),
+            React.createElement(
+                "div",
+                { id: "todoOptions" },
+                React.createElement(
+                    "button",
+                    { id: "doneButton", value: todo._id, onClick: handleDeleteTodo },
+                    "DONE"
+                ),
+                React.createElement(
+                    "button",
+                    { id: "deleteButton", value: todo._id, onClick: handleDeleteTodo },
+                    "DELETE"
+                )
             )
         );
     });
@@ -149,22 +203,64 @@ var TodoList = function TodoList(props) {
     return React.createElement(
         "div",
         { className: "todoList" },
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement(
+            "h2",
+            { id: "todolistTitle" },
+            "Your To-Do List"
+        ),
         todoNodes
     );
 };
 
-var loadTodosFromServer = function loadTodosFromServer() {
+var loadTodosFromServer = function loadTodosFromServer(csrf) {
     sendAjax('GET', '/getTodos', null, function (data) {
-        ReactDOM.render(React.createElement(TodoList, { todos: data.todos }), document.querySelector("#todos"));
+        var props = {
+            todos: data.todos,
+            csrf: csrf
+        };
+        ReactDOM.render(React.createElement(TodoList, props), document.querySelector("#todos"));
     });
 };
 
 var setup = function setup(csrf) {
-    ReactDOM.render(React.createElement(TodoForm, { csrf: csrf }), document.querySelector("#makeTodo"));
+    var addButton = document.querySelector("#addButton");
+    var listButton = document.querySelector("#listButton");
+    var colorButton = document.querySelector("#color");
 
-    ReactDOM.render(React.createElement(TodoList, { todos: [] }), document.querySelector("#todos"));
+    addButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        createTodoForm(csrf);
+        return false;
+    });
 
-    loadTodosFromServer();
+    listButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        createTodoList(csrf);
+        return false;
+    });
+
+    colorButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        handleError("Unlock this feature by subscribing!");
+        return false;
+    });
+
+    createTodoList(csrf); //default view
+};
+
+var createTodoForm = function createTodoForm(csrf) {
+    ReactDOM.render(React.createElement(TodoForm, { csrf: csrf }), document.querySelector("#todos"));
+};
+
+var createTodoList = function createTodoList(csrf) {
+    var props = {
+        todos: [],
+        csrf: csrf
+    };
+    ReactDOM.render(React.createElement(TodoList, props), document.querySelector("#todos"));
+
+    loadTodosFromServer(csrf);
 };
 
 var getToken = function getToken() {
@@ -180,11 +276,11 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
     $("#errorMessage").text(message);
-    $("#domoMessage").animate({ width: 'toggle' }, 350);
+    $("#todoMessage").animate({ width: 'toggle' }, 350);
 };
 
 var redirect = function redirect(response) {
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#todoMessage").animate({ width: 'hide' }, 350);
     window.location = response.redirect;
 };
 
@@ -197,6 +293,7 @@ var sendAjax = function sendAjax(type, action, data, success) {
         dataType: "json",
         success: success,
         error: function error(xhr, status, _error) {
+            console.log(xhr.responseText);
             var messageObj = JSON.parse(xhr.responseText);
             handleError(messageObj.error);
         }

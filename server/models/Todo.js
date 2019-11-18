@@ -43,7 +43,7 @@ const TodoSchema = new mongoose.Schema({
   createdData: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 TodoSchema.statics.toAPI = (doc) => ({
@@ -51,7 +51,7 @@ TodoSchema.statics.toAPI = (doc) => ({
   desc: doc.desc,
   type: doc.type,
   date: doc.date,
-  createdData: doc.createdData
+  createdData: doc.createdData,
 });
 
 TodoSchema.statics.findByOwner = (ownerId, callback) => {

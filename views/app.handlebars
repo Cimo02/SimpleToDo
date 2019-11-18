@@ -13,15 +13,16 @@
   <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
 </head>
 <body>
-  <nav><h2 id="appTitle">The Simple To-Do List</h2>
+  <nav><h2 id="appTitle">The Simple To-Do List</h2><img id="logo" class="navlink navicon" src="/assets/img/favicon.png" alt="logo"/>
+    <div class="navlink"><img class="navicon" id="color" src="/assets/img/palette.png" alt="palette"/></div>
     <div class="navlink"><a href="/logout">Log out</a></div>
+    <div class="navlink"><a id="listButton" href="/#">My ToDos</a></div>
+    <div class="navlink"><a id="addButton" href="/#">Add</a></div>
   </nav>
-  <section id="makeTodo">
-  </section>
   <section id="todos">
   </section>
-  <div id="domoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
-    <h3><span id="errorMessage"></span></h3><img id="domo" src="assets/img/domo.png" alt="domo"/>
+  <div id="todoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
+    <h3><span id="errorMessage"></span></h3>
   </div>
   <script src="/assets/bundle.js"></script>
 </body>

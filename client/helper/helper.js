@@ -1,10 +1,10 @@
 const handleError = (message) => {
     $("#errorMessage").text(message);
-    $("#domoMessage").animate({width:'toggle'},350);
+    $("#todoMessage").animate({width:'toggle'},350);
 };
 
 const redirect = (response) => {
-    $("#domoMessage").animate({width:'hide'},350);
+    $("#todoMessage").animate({width:'hide'},350);
     window.location = response.redirect;
 };
 
@@ -17,6 +17,7 @@ const sendAjax = (type, action, data, success) => {
         dataType: "json",
         success: success,
         error: function(xhr, status, error) {
+            console.log(xhr.responseText);
             var messageObj = JSON.parse(xhr.responseText);
             handleError(messageObj.error);
         }

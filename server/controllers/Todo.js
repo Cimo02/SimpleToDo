@@ -43,6 +43,23 @@ const makeTodo = (req, res) => {
   return todoPromise;
 };
 
+const deleteTodo = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Todo.TodoModel.deleteOne({ _id: req.body._id }, (err, todo) => {
+    if (err) return res.status(500).send(err);
+
+    const jsonRes = {
+      message: 'Todo successfully deleted',
+      id: todo._id,
+      redirect: '/maker',
+    };
+
+    return res.status(200).send(jsonRes);
+  });
+};
+
 const getTodos = (request, response) => {
   const req = request;
   const res = response;
@@ -53,10 +70,11 @@ const getTodos = (request, response) => {
       return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({todos: docs});
+    return res.json({ todos: docs });
   });
 };
 
 module.exports.makerPage = makerPage;
 module.exports.getTodos = getTodos;
+module.exports.deleteTodo = deleteTodo;
 module.exports.make = makeTodo;
