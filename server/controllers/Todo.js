@@ -63,21 +63,24 @@ const deleteTodo = (request, response) => {
 const updateTodo = (request, response) => {
   const req = request;
   const res = response;
-  
-  return Todo.TodoModel.updateOne({ _id: req.body._id }, { title: req.body.title, desc: req.body.desc, type: req.body.type, date: req.body.date  }, (err, todo) => {
-    if (err) return res.status(500).send(err);
 
-    const jsonRes = {
-      message: 'Todo successfully updated',
-      id: todo._id,
-      redirect: '/maker',
-    };
+  // update model with matching _id value
+  return Todo.TodoModel.updateOne({ _id: req.body._id },
+    { title: req.body.title, desc: req.body.desc, type: req.body.type, date: req.body.date },
+    (err, todo) => {
+      if (err) return res.status(500).send(err);
 
-    return res.status(200).send(jsonRes);
-  });
+      const jsonRes = {
+        message: 'Todo successfully updated',
+        id: todo._id,
+        redirect: '/maker',
+      };
+
+      return res.status(200).send(jsonRes);
+    });
 };
 
-const getTodos = (request, response) => { 
+const getTodos = (request, response) => {
   const req = request;
   const res = response;
 
