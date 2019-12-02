@@ -33,6 +33,135 @@ var handleDeleteTodo = function handleDeleteTodo(e) {
     return false;
 };
 
+var loadUpdateForm = function loadUpdateForm(e) {
+    e.preventDefault();
+
+    $("#todoMessage").animate({ width: 'hide' }, 350);
+
+    var csrf = $("input[name=_csrf]").val();
+    var id = e.target.value;
+
+    createUpdateTodoForm(csrf, id);
+
+    return false;
+};
+
+var handleEditTodo = function handleEditTodo(e) {
+    e.preventDefault();
+
+    $("#todoMessage").animate({ width: 'hide' }, 350);
+
+    var csrf = $("input[name=_csrf]").val();
+
+    sendAjax('PUT', $("#todoForm").attr("action"), $("#todoForm").serialize(), function () {
+        loadTodosFromServer(csrf);
+    });
+
+    return false;
+};
+
+var UpdateTodoForm = function UpdateTodoForm(props) {
+    return React.createElement(
+        "form",
+        { id: "todoForm",
+            name: "todoForm",
+            onSubmit: handleEditTodo,
+            action: "/updateTodo",
+            method: "PUT",
+            className: "todoForm"
+        },
+        React.createElement(
+            "h2",
+            { id: "addtodoTitle" },
+            "Update To-Do"
+        ),
+        React.createElement(
+            "ul",
+            null,
+            React.createElement(
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "title" },
+                    "Title: "
+                ),
+                React.createElement("input", { id: "todoTitle", type: "text", name: "title", placeholder: "Item Title" })
+            ),
+            React.createElement(
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "desc" },
+                    "Description: "
+                )
+            ),
+            React.createElement(
+                "li",
+                null,
+                React.createElement("textarea", { id: "todoDesc", name: "desc" })
+            ),
+            React.createElement(
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "type" },
+                    "Type: "
+                ),
+                React.createElement(
+                    "select",
+                    { id: "todoType", name: "type", form: "todoForm" },
+                    React.createElement(
+                        "option",
+                        { value: "Note" },
+                        "Note"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Travel" },
+                        "Travel"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "School" },
+                        "School"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Medical" },
+                        "Medical"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Event" },
+                        "Event"
+                    ),
+                    React.createElement(
+                        "option",
+                        { value: "Shopping" },
+                        "Shopping"
+                    )
+                )
+            ),
+            React.createElement(
+                "li",
+                null,
+                React.createElement(
+                    "label",
+                    { htmlFor: "date" },
+                    "Date: "
+                ),
+                React.createElement("input", { id: "todoDate", type: "date", name: "date" })
+            )
+        ),
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement("input", { type: "hidden", name: "_id", value: props.id }),
+        React.createElement("input", { id: "submitButton", className: "makeTodoSubmit", type: "submit", value: "Update ToDo" })
+    );
+};
+
 var TodoForm = function TodoForm(props) {
     return React.createElement(
         "form",
@@ -130,7 +259,7 @@ var TodoForm = function TodoForm(props) {
             )
         ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "makeTodoSubmit", type: "submit", value: "Add ToDo" })
+        React.createElement("input", { id: "submitButton", className: "makeTodoSubmit", type: "submit", value: "Add ToDo" })
     );
 };
 
@@ -195,6 +324,11 @@ var TodoList = function TodoList(props) {
                     "button",
                     { id: "deleteButton", value: todo._id, onClick: handleDeleteTodo },
                     "DELETE"
+                ),
+                React.createElement(
+                    "button",
+                    { id: "editButton", value: todo._id, onClick: loadUpdateForm },
+                    "EDIT"
                 )
             )
         );
@@ -251,6 +385,10 @@ var setup = function setup(csrf) {
 
 var createTodoForm = function createTodoForm(csrf) {
     ReactDOM.render(React.createElement(TodoForm, { csrf: csrf }), document.querySelector("#todos"));
+};
+
+var createUpdateTodoForm = function createUpdateTodoForm(csrf, id) {
+    ReactDOM.render(React.createElement(UpdateTodoForm, { csrf: csrf, id: id }), document.querySelector("#todos"));
 };
 
 var createTodoList = function createTodoList(csrf) {

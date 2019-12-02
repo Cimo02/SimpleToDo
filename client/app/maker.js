@@ -31,6 +31,78 @@ const handleDeleteTodo = (e) => {
     return false;
 };
 
+const loadUpdateForm = (e) => {
+    e.preventDefault();
+
+    $("#todoMessage").animate({width:'hide'},350);
+    
+    const csrf = $("input[name=_csrf]").val();
+    const id = e.target.value;
+
+    createUpdateTodoForm(csrf, id);
+
+    return false;
+};
+
+const handleEditTodo = (e) => {
+    e.preventDefault();
+
+    $("#todoMessage").animate({width:'hide'},350);
+    
+    const csrf = $("input[name=_csrf]").val();
+
+    sendAjax('PUT', $("#todoForm").attr("action"), $("#todoForm").serialize(), function() {
+        loadTodosFromServer(csrf);
+    });
+
+    return false;
+};
+
+const UpdateTodoForm = (props) => {
+    return (
+        <form id="todoForm" 
+            name="todoForm"
+            onSubmit={handleEditTodo}
+            action="/updateTodo"
+            method="PUT"
+            className="todoForm"
+        >
+            <h2 id="addtodoTitle">Update To-Do</h2>
+            <ul>
+                <li> 
+                    <label htmlFor="title">Title: </label>
+                    <input id="todoTitle" type="text" name="title" placeholder="Item Title"/>
+                </li>
+                <li>
+                    <label htmlFor="desc">Description: </label>
+                </li>
+                <li>
+                    <textarea id="todoDesc" name="desc"></textarea>
+                </li>
+                <li>
+                    <label htmlFor="type">Type: </label>
+                    <select id="todoType" name="type" form="todoForm">
+                        <option value="Note">Note</option>
+                        <option value="Travel">Travel</option>
+                        <option value="School">School</option>
+                        <option value="Medical">Medical</option>
+                        <option value="Event">Event</option>
+                        <option value="Shopping">Shopping</option>
+                    </select>
+                </li>
+                <li>
+                    <label htmlFor="date">Date: </label>
+                    <input id="todoDate" type="date" name="date"/>
+                </li>
+            </ul>
+            
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input type="hidden" name="_id" value={props.id} />
+            <input id="submitButton" className="makeTodoSubmit" type="submit" value="Update ToDo" />
+        </form>
+    );
+}
+
 const TodoForm = (props) => {
     return (
         <form id="todoForm" 
@@ -70,7 +142,7 @@ const TodoForm = (props) => {
             </ul>
             
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeTodoSubmit" type="submit" value="Add ToDo" />
+            <input id="submitButton" className="makeTodoSubmit" type="submit" value="Add ToDo" />
         </form>
     );
 };
@@ -96,6 +168,7 @@ const TodoList = function(props) {
                     <div id="todoOptions">
                         <button id="doneButton" value={todo._id} onClick={handleDeleteTodo} >DONE</button>
                         <button id="deleteButton" value={todo._id} onClick={handleDeleteTodo} >DELETE</button>
+                        <button id="editButton" value={todo._id} onClick={loadUpdateForm} >EDIT</button>
                     </div>
             </div>
         );
@@ -151,6 +224,12 @@ const setup = function(csrf) {
 const createTodoForm = (csrf) => {
     ReactDOM.render(
         <TodoForm csrf={csrf} />, document.querySelector("#todos")
+    );
+};
+
+const createUpdateTodoForm = (csrf, id) => {
+    ReactDOM.render(
+        <UpdateTodoForm csrf={csrf} id={id} />, document.querySelector("#todos")
     );
 };
 
