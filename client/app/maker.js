@@ -10,7 +10,7 @@ const handleTodo = (e) => {
     const csrf = $("input[name=_csrf]").val();
 
     sendAjax('POST', $("#todoForm").attr("action"), $("#todoForm").serialize(), function() {
-        loadTodosFromServer(csrf);
+        loadTodosFromServer(csrf, false);
     });
 
     return false;
@@ -25,7 +25,7 @@ const handleDeleteTodo = (e) => {
     const url = "_id=" + e.target.value + "&_csrf=" + csrf;
     
     sendAjax('DELETE', "/deleteTodo", url, (data) => {
-        loadTodosFromServer(csrf);
+        loadTodosFromServer(csrf, false);
     });
 
     return false;
@@ -39,7 +39,10 @@ const loadUpdateForm = (e) => {
     const csrf = $("input[name=_csrf]").val();
     const id = e.target.value;
 
-    createUpdateTodoForm(csrf, id);
+    sendAjax('GET', '/getTodos', null, (data) => {
+        const result = data.todos.find( ({ _id }) => _id === id );
+        createUpdateTodoForm(csrf, id, result.title, result.desc);
+    });
 
     return false;
 };
@@ -52,8 +55,38 @@ const handleEditTodo = (e) => {
     const csrf = $("input[name=_csrf]").val();
 
     sendAjax('PUT', $("#todoForm").attr("action"), $("#todoForm").serialize(), function() {
-        loadTodosFromServer(csrf);
+        loadTodosFromServer(csrf, false);
     });
+
+    return false;
+};
+
+const changeColorTheme = (e) => {
+    const navbar = document.querySelector("#navbar");
+    navbar.style.backgroundColor = '#0D663D';
+
+    const logoutButton = document.querySelector("#listbutton");
+    const listButton = document.querySelector("#logoutbutton");
+    const addButton = document.querySelector("#addbutton");
+    
+    logoutButton.style.backgroundColor = '#0D663D';
+    listButton.style.backgroundColor = '#0D663D';
+    addButton.style.backgroundColor = '#0D663D';
+
+    const todoTitle = document.querySelector("#todolistTitle");
+    todoTitle.style.color = "#0D663D";
+
+    const todos = document.getElementsByClassName("todo");
+    for (var i = 0; i < todos.length; i++) {
+        todos[i].style.backgroundColor = "#0D663D";
+        todos[i].style.borderColor = "#0D663D";
+    }
+
+    const todoButtons = document.getElementsByTagName("button");
+    console.log(todoButtons);
+    for (var i = 0; i < todoButtons.length; i++) {
+        todoButtons[i].style.backgroundColor = "#16A662";
+    }
 
     return false;
 };
@@ -71,13 +104,13 @@ const UpdateTodoForm = (props) => {
             <ul>
                 <li> 
                     <label htmlFor="title">Title: </label>
-                    <input id="todoTitle" type="text" name="title" placeholder="Item Title"/>
+                    <input id="todoTitle" type="text" name="title" placeholder={props.title} />
                 </li>
                 <li>
                     <label htmlFor="desc">Description: </label>
                 </li>
                 <li>
-                    <textarea id="todoDesc" name="desc"></textarea>
+                    <textarea id="todoDesc" name="desc" placeholder={props.desc} ></textarea>
                 </li>
                 <li>
                     <label htmlFor="type">Type: </label>
@@ -166,9 +199,9 @@ const TodoList = function(props) {
                         <h3 className="todoDate">Date: {todo.date} </h3>
                     </div>
                     <div id="todoOptions">
-                        <button id="doneButton" value={todo._id} onClick={handleDeleteTodo} >DONE</button>
-                        <button id="deleteButton" value={todo._id} onClick={handleDeleteTodo} >DELETE</button>
-                        <button id="editButton" value={todo._id} onClick={loadUpdateForm} >EDIT</button>
+                        <button class="todoOption" id="doneButton" value={todo._id} onClick={handleDeleteTodo} >DONE</button>
+                        <button class="todoOption" id="deleteButton" value={todo._id} onClick={handleDeleteTodo} >DELETE</button>
+                        <button class="todoOption" id="editButton" value={todo._id} onClick={loadUpdateForm} >EDIT</button>
                     </div>
             </div>
         );
@@ -183,12 +216,18 @@ const TodoList = function(props) {
     );
 };
 
-const loadTodosFromServer = (csrf) => {
+const loadTodosFromServer = (csrf, sortByDate) => {
     sendAjax('GET', '/getTodos', null, (data) => {
         const props = {
             todos: data.todos,
             csrf: csrf
         };
+
+        // sort todo list here if sortByDate is true
+        if (sortByDate) {
+            props.todos.sort(compareDates);
+        }
+
         ReactDOM.render(
             <TodoList {...props} />, document.querySelector("#todos")
         );
@@ -199,6 +238,8 @@ const setup = function(csrf) {
     const addButton = document.querySelector("#addButton");
     const listButton = document.querySelector("#listButton");
     const colorButton = document.querySelector("#color");
+    const subscribeButton = document.querySelector("#subscribe");
+    const sortButton = document.querySelector("#sort");
 
     addButton.addEventListener("click", (e) => {
         e.preventDefault();
@@ -214,7 +255,19 @@ const setup = function(csrf) {
 
     colorButton.addEventListener("click", (e) => {
         e.preventDefault();
-        handleError("Unlock this feature by subscribing!");
+        changeColorTheme();
+        return false;
+    });
+
+    subscribeButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        handleError("Unable to subscribe yet!");
+        return false;
+    });
+
+    sortButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        loadTodosFromServer(csrf, true);
         return false;
     });
 
@@ -227,9 +280,9 @@ const createTodoForm = (csrf) => {
     );
 };
 
-const createUpdateTodoForm = (csrf, id) => {
+const createUpdateTodoForm = (csrf, id, title, description, type, date) => {
     ReactDOM.render(
-        <UpdateTodoForm csrf={csrf} id={id} />, document.querySelector("#todos")
+        <UpdateTodoForm csrf={csrf} id={id} title={title} desc={description}/>, document.querySelector("#todos")
     );
 };
 
@@ -242,7 +295,7 @@ const createTodoList = (csrf) => {
         <TodoList {...props} />, document.querySelector("#todos")
     );
 
-    loadTodosFromServer(csrf);
+    loadTodosFromServer(csrf, false);
 };
 
 const getToken = () => {
@@ -254,3 +307,19 @@ const getToken = () => {
 $(document).ready(function() {
     getToken();
 });
+
+// function for sorting todo array by date 
+function compareDates(a, b) {
+    var aDate = a.date;
+    var bDate = b.date;
+
+    let comparison = 0;
+    if (aDate > bDate) {
+        comparison = 1;
+    } 
+    else if (aDate < bDate) {
+        comparison = -1;
+    }
+    
+    return comparison;
+}

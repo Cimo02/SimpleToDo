@@ -12,7 +12,7 @@ var handleTodo = function handleTodo(e) {
     var csrf = $("input[name=_csrf]").val();
 
     sendAjax('POST', $("#todoForm").attr("action"), $("#todoForm").serialize(), function () {
-        loadTodosFromServer(csrf);
+        loadTodosFromServer(csrf, false);
     });
 
     return false;
@@ -27,7 +27,7 @@ var handleDeleteTodo = function handleDeleteTodo(e) {
     var url = "_id=" + e.target.value + "&_csrf=" + csrf;
 
     sendAjax('DELETE', "/deleteTodo", url, function (data) {
-        loadTodosFromServer(csrf);
+        loadTodosFromServer(csrf, false);
     });
 
     return false;
@@ -41,7 +41,13 @@ var loadUpdateForm = function loadUpdateForm(e) {
     var csrf = $("input[name=_csrf]").val();
     var id = e.target.value;
 
-    createUpdateTodoForm(csrf, id);
+    sendAjax('GET', '/getTodos', null, function (data) {
+        var result = data.todos.find(function (_ref) {
+            var _id = _ref._id;
+            return _id === id;
+        });
+        createUpdateTodoForm(csrf, id, result.title, result.desc);
+    });
 
     return false;
 };
@@ -54,8 +60,38 @@ var handleEditTodo = function handleEditTodo(e) {
     var csrf = $("input[name=_csrf]").val();
 
     sendAjax('PUT', $("#todoForm").attr("action"), $("#todoForm").serialize(), function () {
-        loadTodosFromServer(csrf);
+        loadTodosFromServer(csrf, false);
     });
+
+    return false;
+};
+
+var changeColorTheme = function changeColorTheme(e) {
+    var navbar = document.querySelector("#navbar");
+    navbar.style.backgroundColor = '#0D663D';
+
+    var logoutButton = document.querySelector("#listbutton");
+    var listButton = document.querySelector("#logoutbutton");
+    var addButton = document.querySelector("#addbutton");
+
+    logoutButton.style.backgroundColor = '#0D663D';
+    listButton.style.backgroundColor = '#0D663D';
+    addButton.style.backgroundColor = '#0D663D';
+
+    var todoTitle = document.querySelector("#todolistTitle");
+    todoTitle.style.color = "#0D663D";
+
+    var todos = document.getElementsByClassName("todo");
+    for (var i = 0; i < todos.length; i++) {
+        todos[i].style.backgroundColor = "#0D663D";
+        todos[i].style.borderColor = "#0D663D";
+    }
+
+    var todoButtons = document.getElementsByTagName("button");
+    console.log(todoButtons);
+    for (var i = 0; i < todoButtons.length; i++) {
+        todoButtons[i].style.backgroundColor = "#16A662";
+    }
 
     return false;
 };
@@ -86,7 +122,7 @@ var UpdateTodoForm = function UpdateTodoForm(props) {
                     { htmlFor: "title" },
                     "Title: "
                 ),
-                React.createElement("input", { id: "todoTitle", type: "text", name: "title", placeholder: "Item Title" })
+                React.createElement("input", { id: "todoTitle", type: "text", name: "title", placeholder: props.title })
             ),
             React.createElement(
                 "li",
@@ -100,7 +136,7 @@ var UpdateTodoForm = function UpdateTodoForm(props) {
             React.createElement(
                 "li",
                 null,
-                React.createElement("textarea", { id: "todoDesc", name: "desc" })
+                React.createElement("textarea", { id: "todoDesc", name: "desc", placeholder: props.desc })
             ),
             React.createElement(
                 "li",
@@ -317,17 +353,17 @@ var TodoList = function TodoList(props) {
                 { id: "todoOptions" },
                 React.createElement(
                     "button",
-                    { id: "doneButton", value: todo._id, onClick: handleDeleteTodo },
+                    { "class": "todoOption", id: "doneButton", value: todo._id, onClick: handleDeleteTodo },
                     "DONE"
                 ),
                 React.createElement(
                     "button",
-                    { id: "deleteButton", value: todo._id, onClick: handleDeleteTodo },
+                    { "class": "todoOption", id: "deleteButton", value: todo._id, onClick: handleDeleteTodo },
                     "DELETE"
                 ),
                 React.createElement(
                     "button",
-                    { id: "editButton", value: todo._id, onClick: loadUpdateForm },
+                    { "class": "todoOption", id: "editButton", value: todo._id, onClick: loadUpdateForm },
                     "EDIT"
                 )
             )
@@ -347,12 +383,18 @@ var TodoList = function TodoList(props) {
     );
 };
 
-var loadTodosFromServer = function loadTodosFromServer(csrf) {
+var loadTodosFromServer = function loadTodosFromServer(csrf, sortByDate) {
     sendAjax('GET', '/getTodos', null, function (data) {
         var props = {
             todos: data.todos,
             csrf: csrf
         };
+
+        // sort todo list here if sortByDate is true
+        if (sortByDate) {
+            props.todos.sort(compareDates);
+        }
+
         ReactDOM.render(React.createElement(TodoList, props), document.querySelector("#todos"));
     });
 };
@@ -361,6 +403,8 @@ var setup = function setup(csrf) {
     var addButton = document.querySelector("#addButton");
     var listButton = document.querySelector("#listButton");
     var colorButton = document.querySelector("#color");
+    var subscribeButton = document.querySelector("#subscribe");
+    var sortButton = document.querySelector("#sort");
 
     addButton.addEventListener("click", function (e) {
         e.preventDefault();
@@ -376,7 +420,19 @@ var setup = function setup(csrf) {
 
     colorButton.addEventListener("click", function (e) {
         e.preventDefault();
-        handleError("Unlock this feature by subscribing!");
+        changeColorTheme();
+        return false;
+    });
+
+    subscribeButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        handleError("Unable to subscribe yet!");
+        return false;
+    });
+
+    sortButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        loadTodosFromServer(csrf, true);
         return false;
     });
 
@@ -387,8 +443,8 @@ var createTodoForm = function createTodoForm(csrf) {
     ReactDOM.render(React.createElement(TodoForm, { csrf: csrf }), document.querySelector("#todos"));
 };
 
-var createUpdateTodoForm = function createUpdateTodoForm(csrf, id) {
-    ReactDOM.render(React.createElement(UpdateTodoForm, { csrf: csrf, id: id }), document.querySelector("#todos"));
+var createUpdateTodoForm = function createUpdateTodoForm(csrf, id, title, description, type, date) {
+    ReactDOM.render(React.createElement(UpdateTodoForm, { csrf: csrf, id: id, title: title, desc: description }), document.querySelector("#todos"));
 };
 
 var createTodoList = function createTodoList(csrf) {
@@ -398,7 +454,7 @@ var createTodoList = function createTodoList(csrf) {
     };
     ReactDOM.render(React.createElement(TodoList, props), document.querySelector("#todos"));
 
-    loadTodosFromServer(csrf);
+    loadTodosFromServer(csrf, false);
 };
 
 var getToken = function getToken() {
@@ -410,6 +466,21 @@ var getToken = function getToken() {
 $(document).ready(function () {
     getToken();
 });
+
+// function for sorting todo array by date 
+function compareDates(a, b) {
+    var aDate = a.date;
+    var bDate = b.date;
+
+    var comparison = 0;
+    if (aDate > bDate) {
+        comparison = 1;
+    } else if (aDate < bDate) {
+        comparison = -1;
+    }
+
+    return comparison;
+}
 "use strict";
 
 var handleError = function handleError(message) {

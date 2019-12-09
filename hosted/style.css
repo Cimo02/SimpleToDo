@@ -1,9 +1,13 @@
-/* Color Theme Swatches in Hex 
+/* Main Color Theme Swatches in Hex 
 1 - { color: #322140; }
 2 - { color: #3D305E; }
 3 - { color: #4F4F8C; }
-4 - { color: #6883CC; }
-5 - { color: #82C5FF; }
+*/
+
+/* Secondary Color Theme Swatches in Hex 
+1 - { color: #084026; }
+2 - { color: #0D663D; }
+3 - { color: #16A662; }
 */
 
 html, body {
@@ -352,4 +356,38 @@ h3.todoTitle {
     padding: 5px;
     padding-top: 21px;
     padding-left: 10px;
+}
+
+#subscribe {
+    height: 45px;
+    width: 125px;
+    position: fixed;
+    top: 125px;
+    right: 50px;
+    background-color: #4F4F8C;
+    border-style: none;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 400;
+    font-family: mr-eaves-xl-modern, sans-serif;
+    font-size: 1.5em;
+}
+
+#sort { 
+    position: fixed;
+    top: 125px;
+    right: 200px;
+    background-color: #4F4F8C;
+    border-style: none;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 400;
+    font-family: mr-eaves-xl-modern, sans-serif;
+    font-size: 1.5em;
+    height: 45px;
+    width: 80px;
 }
